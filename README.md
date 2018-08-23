@@ -1,5 +1,5 @@
 # lagou_spider
-模拟拉钩app系列---数据准备爬虫
+模拟拉勾app系列---数据准备爬虫
 
 1.安装依赖包 pip install -r requirements.txt
 
