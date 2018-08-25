@@ -149,6 +149,7 @@ celerybeat-schedule
 .venv
 env/
 venv/
+lagou_venv/*
 ENV/
 env.bak/
 venv.bak/
