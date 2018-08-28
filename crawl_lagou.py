@@ -1,9 +1,11 @@
 import requests
 import pymongo
+import config
 
 # 基本信息
-client = pymongo.MongoClient(host='localhost', port=27017)
-db = client['data_db']
+client = pymongo.MongoClient(host=config.MONGO_HOST, port=config.MONGO_PORT)
+db = client[config.MONGO_DB]
+db.authenticate(config.MONGO_AUTH_NAME, config.MONGO_AUTH_PASSWORD)
 recruit_data = db['recruit']
 topic_data = db['topic']
 company_data = db['company']
@@ -146,12 +148,14 @@ def save_to_db(content, now_type):
     if now_type == 'company':
         data_list = content
         for item in data_list:
+            print(item)
             find_data = company_data.find_one(
                 {'companyId': item.get('companyId')})
             if not find_data:  # 查重后插入数据库
                 company_data.insert(item)
     elif now_type == 'data':
         data_list = content.get('positionResult').get('result')
+        print(data_list)
         for item in data_list:
             find_data = recruit_data.find_one(
                 {'companyId': item.get('companyId'), 'createTime': item.get('createTime')})
@@ -160,6 +164,6 @@ def save_to_db(content, now_type):
 
 
 if __name__ == '__main__':
-    # for keyword in keywords:
-    #     get_data_by_crawl('全国', keyword)
-    pass
+    for keyword in keywords:
+        get_data_by_crawl('全国', keyword)
+    get_company_by_crawl()

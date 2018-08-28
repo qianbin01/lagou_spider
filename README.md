@@ -18,7 +18,7 @@
     crontab –e 设置
     crontab –l 查看
     cmd:
-    分 时 日 月 周  命令（*代表当前单位的所有时间）
+    分 时 天  周 月  命令（*代表当前单位的所有时间）
     *  *  *  *  *  command
     每天9点运行一次语句为：
     0  9  *  *  *  /usr/bin/python3 /home/qb/do_something.py
