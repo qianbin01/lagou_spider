@@ -93,6 +93,7 @@ def get_comment_from_article():
                 if not comment_item:
                     sub_item['article_id'] = str(item['questionId'])
                     comment_data.insert(sub_item)
+        article_data.update({'_id': item['_id']}, {'$set': {'answerInfoList': []}})
 
 
 # 将评论用户从评论中单独划出
@@ -103,8 +104,8 @@ def get_user_from_comment():
         comment_user_item = comment_user.find_one({'id': sub_item.get('id')})
         if not comment_user_item:
             sub_item['answerId'] = item['answerId']
-            print(sub_item)
             comment_user.insert(sub_item)
+        comment_data.update({'_id': item['_id']}, {'$set': {'answerUser': ''}})
 
 
 if __name__ == '__main__':
