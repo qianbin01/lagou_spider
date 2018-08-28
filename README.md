@@ -24,3 +24,5 @@
     0  9  *  *  *  /usr/bin/python3 /home/qb/do_something.py
 
 测试地址: http://114.67.151.31:5010 (单机勿压。感谢)
+
+ps:拉钩头条的地址找不到，暂用36kr代替
