@@ -34,5 +34,16 @@ def get_news_by_36kr():
                 news.insert(single_data)
 
 
+def format_news():
+    import re
+    p = re.compile('\"(.*?)\"')
+    for item in news.find():
+        if type(item['extraction_tags']) == str:
+            match = p.findall(item['extraction_tags'])
+            news.update({'_id': item['_id']}, {'$set': {'extraction_tags': match}})
+            print(match)
+
+
 if __name__ == '__main__':
     get_news_by_36kr()
+    format_news()
