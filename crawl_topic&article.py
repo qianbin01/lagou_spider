@@ -108,8 +108,31 @@ def get_user_from_comment():
         comment_data.update({'_id': item['_id']}, {'$set': {'answerUser': ''}})
 
 
+def format_img():
+    users = comment_user.find(no_cursor_timeout=True)
+    for user in users:
+        try:
+            if user.get('portrait'):
+                portrait = user['portrait']
+                if 'http://www.lgstatic.com' not in portrait and 'https://static.lagou' not in portrait:
+                    portrait = 'http://www.lgstatic.com/' + portrait
+                    comment_user.update({'_id': user['_id']}, {'$set': {'portrait': portrait}})
+        except Exception as e:
+            print(e)
+    topics = topic_data.find(no_cursor_timeout=True)
+    for topic in topics:
+        try:
+            logo = topic['logo']
+            if 'http://www.lgstatic.com' not in logo and 'https://static.lagou' not in logo:
+                logo = 'http://www.lgstatic.com/' + logo
+                topic_data.update({'_id': topic['_id']}, {'$set': {'logo': logo}})
+        except Exception as e:
+            print(e)
+
+
 if __name__ == '__main__':
     get_topic_by_crawl()
     get_article_by_crawl()
     get_comment_from_article()
     get_user_from_comment()
+    format_img()

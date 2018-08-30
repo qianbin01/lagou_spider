@@ -155,15 +155,39 @@ def save_to_db(content, now_type):
                 company_data.insert(item)
     elif now_type == 'data':
         data_list = content.get('positionResult').get('result')
-        print(data_list)
         for item in data_list:
             find_data = recruit_data.find_one(
                 {'companyId': item.get('companyId'), 'createTime': item.get('createTime')})
             if not find_data:  # 查重后插入数据库
+                item['rid'] = str(item['_id'])
                 recruit_data.insert(item)
+
+
+def format_img():
+    recruits = recruit_data.find(no_cursor_timeout=True)
+    for recruit in recruits:
+        try:
+            company_logo = recruit['companyLogo']
+            if 'http://www.lgstatic.com' not in company_logo and 'https://static.lagou' not in company_logo:
+                company_logo = 'http://www.lgstatic.com/' + company_logo
+                recruit_data.update({'_id': recruit['_id']}, {'$set': {'companyLogo': company_logo}})
+        except Exception as e:
+            print(e)
+            continue
+    companies = company_data.find(no_cursor_timeout=True)
+    for company in companies:
+        try:
+            company_logo2 = company['companyLogo']
+            if 'http://www.lgstatic.com' not in company_logo2 and 'https://static.lagou' not in company_logo2:
+                company_logo2 = 'http://www.lgstatic.com/' + company_logo2
+                recruit_data.update({'_id': company['_id']}, {'$set': {'companyLogo': company_logo2}})
+        except Exception as e:
+            print(e)
+            continue
 
 
 if __name__ == '__main__':
     for keyword in keywords:
         get_data_by_crawl('全国', keyword)
     get_company_by_crawl()
+    format_img()
