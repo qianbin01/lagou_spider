@@ -159,7 +159,6 @@ def save_to_db(content, now_type):
             find_data = recruit_data.find_one(
                 {'companyId': item.get('companyId'), 'createTime': item.get('createTime')})
             if not find_data:  # 查重后插入数据库
-                item['rid'] = str(item['_id'])
                 recruit_data.insert(item)
 
 
@@ -174,6 +173,7 @@ def format_img():
         except Exception as e:
             print(e)
             continue
+    recruits.close()
     companies = company_data.find(no_cursor_timeout=True)
     for company in companies:
         try:
@@ -184,6 +184,7 @@ def format_img():
         except Exception as e:
             print(e)
             continue
+    companies.close()
 
 
 if __name__ == '__main__':

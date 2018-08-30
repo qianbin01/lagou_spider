@@ -94,6 +94,7 @@ def get_comment_from_article():
                     sub_item['article_id'] = str(item['questionId'])
                     comment_data.insert(sub_item)
         article_data.update({'_id': item['_id']}, {'$set': {'answerInfoList': []}})
+    articles.close()
 
 
 # 将评论用户从评论中单独划出
@@ -106,6 +107,7 @@ def get_user_from_comment():
             sub_item['answerId'] = item['answerId']
             comment_user.insert(sub_item)
         comment_data.update({'_id': item['_id']}, {'$set': {'answerUser': ''}})
+    comments.close()
 
 
 def format_img():
@@ -119,6 +121,7 @@ def format_img():
                     comment_user.update({'_id': user['_id']}, {'$set': {'portrait': portrait}})
         except Exception as e:
             print(e)
+    users.close()
     topics = topic_data.find(no_cursor_timeout=True)
     for topic in topics:
         try:
@@ -128,6 +131,7 @@ def format_img():
                 topic_data.update({'_id': topic['_id']}, {'$set': {'logo': logo}})
         except Exception as e:
             print(e)
+    topics.close()
 
 
 if __name__ == '__main__':
