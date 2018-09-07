@@ -60,12 +60,12 @@ keywords = [
 
 # 获取代理
 def get_proxy():
-    return requests.get("http://114.67.151.31:5010/get/").content  # ip替换成自己的服务器地址
+    return requests.get("http://{}:5010/get/".format(config.MONGO_HOST)).content  # ip替换成自己的服务器地址
 
 
 # 删除服务器无用代理
 def delete_proxy(proxy):
-    requests.get("http://114.67.151.31:5010/delete/?proxy={}".format(proxy))  # ip替换成自己的服务器地址
+    requests.get("http://{}:5010/delete/?proxy={}".format(config.MONGO_HOST, proxy))  # ip替换成自己的服务器地址
 
 
 # 获取求职岗位数据
@@ -79,6 +79,11 @@ def get_data_by_crawl(city, kw):
     for i in range(1, 100):
         data = {"first": "true", "pn": i, "kd": kw}
         base_request = requests.post(url, data=data, headers=headers, timeout=3)
+        try:
+            base_request.json().get('content')
+        except Exception as e:
+            print(e)
+            continue
         if not base_request.json().get('content', ''):
             flag = False
             while not flag:  # 若代理ip没走通则换一个
@@ -110,13 +115,14 @@ def get_company_by_crawl():
         'http': 'http://{}'.format(proxy),
         'https': 'http://{}'.format(proxy),
     }  # 获取并设置代理
-    for i in range(1, 1000):
+    for i in range(1, 100):
         data = {
             'first': False,
             'pn': i,
             'sortField': 1,
             'havemark': 0
         }
+        print(i)
         base_request = requests.post(url, data=data, headers=headers, timeout=3)
         if '网络出错啦' in base_request.text or not base_request.json().get('result', ''):
             flag = False
@@ -159,6 +165,7 @@ def save_to_db(content, now_type):
             find_data = recruit_data.find_one(
                 {'companyId': item.get('companyId'), 'createTime': item.get('createTime')})
             if not find_data:  # 查重后插入数据库
+                print(item)
                 recruit_data.insert(item)
 
 
@@ -188,7 +195,7 @@ def format_img():
 
 
 if __name__ == '__main__':
+    get_company_by_crawl()
     for keyword in keywords:
         get_data_by_crawl('全国', keyword)
-    get_company_by_crawl()
     format_img()
