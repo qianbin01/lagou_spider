@@ -51,5 +51,5 @@ def combine_data():
 
 
 if __name__ == '__main__':
-    # combine_data()
+    combine_data()
     get_subway_data()
