@@ -13,7 +13,6 @@ def get_subway_data():
     city_with_subway_url = 'http://map.baidu.com/?qt=subwayscity'
     subway_detail_url = 'http://map.baidu.com/?qt=bsi&c={}'
     r = requests.get(city_with_subway_url)
-    subway_names = []
     for item in r.json().get('subways_city').get('cities'):
         if item['code'] < 10000:
             url = subway_detail_url.format(item['code'])
@@ -23,8 +22,6 @@ def get_subway_data():
                 'subWayList': []
             }
             for subway in r.json().get('content'):
-                if subway['line_name'].split('(')[0] not in subway_names:
-                    subway_names.append(subway['line_name'].split('(')[0])
                 subway_doc = {
                     'lineName': subway['line_name'].split('(')[0],
                     'stops': []
@@ -32,12 +29,11 @@ def get_subway_data():
                 for stop in subway['stops']:
                     subway_doc['stops'].append(stop['name'])
                 doc['subWayList'].append(subway_doc)
-                find_data = subways_data.find_one(
-                    {'cityName': doc.get('cityName')})
-                if not find_data:  # 查重后插入数据库
-                    subways_data.insert(doc)
-            subway_names = []
             print(doc)
+            find_data = subways_data.find_one(
+                {'cityName': doc.get('cityName')})
+            if not find_data:  # 查重后插入数据库
+                subways_data.insert(doc)
 
 
 def combine_data():
@@ -55,5 +51,5 @@ def combine_data():
 
 
 if __name__ == '__main__':
-    combine_data()
+    # combine_data()
     get_subway_data()
