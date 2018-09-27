@@ -2,6 +2,7 @@ import requests
 import pymongo
 import config
 from bs4 import BeautifulSoup
+import time
 
 client = pymongo.MongoClient(host=config.MONGO_HOST, port=config.MONGO_PORT)
 db = client[config.MONGO_DB]
@@ -30,6 +31,10 @@ def delete_proxy(proxy):
 
 
 def get_html(doc, cid):
+    company_detail_one = company_detail.find_one({'companyId': cid})
+    if company_detail_one:
+        print(doc['companyShortName'] + '已经存在，直接跳过')
+        return False
     url = base_url.format(cid)
     r = requests.get(url, headers=headers)
     soup = BeautifulSoup(r.text, 'lxml')
@@ -91,7 +96,8 @@ def get_html(doc, cid):
                 'itemTime': li.find('span', class_='item-time').text.strip(),
                 'itemStatus': li.find('div', class_='item-status').text.strip(),
             })
-        except:
+        except Exception as e:
+            print(e)
             continue
     detail_doc['questionList'] = question_list
 
@@ -104,9 +110,17 @@ def get_html(doc, cid):
     }
     reply_header = headers
     reply_header['Referer'] = 'https://www.lagou.com/gongsi/interviewExperiences.html?companyId={}'.format(cid)
-    reply_r = requests.post(reply_url, data=reply_data, headers=reply_header)
-    reply_list = reply_r.json().get('content').get('data').get('page').get('result')
-    detail_doc['replyList'] = reply_list
+    try:
+        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header)
+        reply_list = reply_r.json().get('content').get('data').get('page').get('result')
+        detail_doc['replyList'] = reply_list
+    except Exception as e:
+        print(e)
+        print('这里请求太快，代理不够用，等3分钟再请求吧')
+        time.sleep(180)
+        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header)
+        reply_list = reply_r.json().get('content').get('data').get('page').get('result')
+        detail_doc['replyList'] = reply_list
     # 职位记载
     recruit_data = {
         'companyId': cid,
@@ -117,12 +131,19 @@ def get_html(doc, cid):
     }
     recruit_header = headers
     recruit_header['Referer'] = 'https://www.lagou.com/gongsi/j{}.html'.format(cid)
-    recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header)
-    recruit_list = recruit_r.json().get('content').get('data').get('page').get('result')
-    detail_doc['recruitList'] = recruit_list
-    company_detail_one = company_detail.find_one({'companyId': cid})
-    if not company_detail_one:
-        company_detail.insert(detail_doc)
+    try:
+        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header)
+        recruit_list = recruit_r.json().get('content').get('data').get('page').get('result')
+        detail_doc['recruitList'] = recruit_list
+    except Exception as e:
+        print(e)
+        print('这里请求太快，代理不够用，等3分钟再请求吧')
+        time.sleep(180)
+        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header)
+        recruit_list = recruit_r.json().get('content').get('data').get('page').get('result')
+        detail_doc['recruitList'] = recruit_list
+    print(detail_doc)
+    company_detail.insert(detail_doc)
 
 
 def get_cid_from_db():
