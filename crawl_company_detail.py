@@ -6,7 +6,7 @@ import time
 
 client = pymongo.MongoClient(host=config.MONGO_HOST, port=config.MONGO_PORT)
 db = client[config.MONGO_DB]
-# db.authenticate(config.MONGO_AUTH_NAME, config.MONGO_AUTH_PASSWORD)
+db.authenticate(config.MONGO_AUTH_NAME, config.MONGO_AUTH_PASSWORD)
 company = db['company']
 company_detail = db['company_detail']
 headers = {
