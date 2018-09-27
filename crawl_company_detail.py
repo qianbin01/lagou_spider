@@ -36,7 +36,7 @@ def get_html(doc, cid):
         print(doc['companyShortName'] + '已经存在，直接跳过')
         return False
     url = base_url.format(cid)
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, allow_redirects=False)
     soup = BeautifulSoup(r.text, 'lxml')
     span = soup.find('span', class_='company_content')
     if not span:
@@ -47,7 +47,7 @@ def get_html(doc, cid):
                 'https': 'http://{}'.format(proxy),
             }  # 获取并设置代理
             try:
-                r = requests.get(url, headers=headers, proxies=proxies)
+                r = requests.get(url, headers=headers, proxies=proxies, allow_redirects=False)
                 soup = BeautifulSoup(r.text, 'lxml')
                 span = soup.find('span', class_='company_content')
                 if span:
@@ -88,7 +88,7 @@ def get_html(doc, cid):
     detail_doc['historyList'] = history_list
 
     # 问题记载
-    question_r = requests.get(question_url.format(cid))
+    question_r = requests.get(question_url.format(cid), allow_redirects=False)
     question_soup = BeautifulSoup(question_r.text, 'lxml')
     question_ul = question_soup.find('ul', id='question-answer-list')
     question_list = []
@@ -115,14 +115,14 @@ def get_html(doc, cid):
     reply_header = headers
     reply_header['Referer'] = 'https://www.lagou.com/gongsi/interviewExperiences.html?companyId={}'.format(cid)
     try:
-        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header)
+        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header, allow_redirects=False)
         reply_list = reply_r.json().get('content').get('data').get('page').get('result')
         detail_doc['replyList'] = reply_list
     except Exception as e:
         print(e)
         print('这里请求太快，代理不够用，等3分钟再请求吧')
         time.sleep(180)
-        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header)
+        reply_r = requests.post(reply_url, data=reply_data, headers=reply_header, allow_redirects=False)
         reply_list = reply_r.json().get('content').get('data').get('page').get('result')
         detail_doc['replyList'] = reply_list
     # 职位记载
@@ -136,14 +136,14 @@ def get_html(doc, cid):
     recruit_header = headers
     recruit_header['Referer'] = 'https://www.lagou.com/gongsi/j{}.html'.format(cid)
     try:
-        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header)
+        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header, allow_redirects=False)
         recruit_list = recruit_r.json().get('content').get('data').get('page').get('result')
         detail_doc['recruitList'] = recruit_list
     except Exception as e:
         print(e)
         print('这里请求太快，代理不够用，等3分钟再请求吧')
         time.sleep(180)
-        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header)
+        recruit_r = requests.post(recruit_url, data=recruit_data, headers=recruit_header, allow_redirects=False)
         recruit_list = recruit_r.json().get('content').get('data').get('page').get('result')
         detail_doc['recruitList'] = recruit_list
     print(detail_doc)
