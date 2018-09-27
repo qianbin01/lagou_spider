@@ -6,7 +6,7 @@ import time
 
 client = pymongo.MongoClient(host=config.MONGO_HOST, port=config.MONGO_PORT)
 db = client[config.MONGO_DB]
-db.authenticate(config.MONGO_AUTH_NAME, config.MONGO_AUTH_PASSWORD)
+# db.authenticate(config.MONGO_AUTH_NAME, config.MONGO_AUTH_PASSWORD)
 company = db['company']
 company_detail = db['company_detail']
 headers = {
@@ -62,26 +62,29 @@ def get_html(doc, cid):
     # 图片
     img_ul = soup.find('ul', class_='company_img')
     img_list = []
-    for li in img_ul.find_all('li'):
-        img_list.append({'src': li.get('data-item')})
+    if img_ul:
+        for li in img_ul.find_all('li'):
+            img_list.append({'src': li.get('data-item')})
     detail_doc['imgList'] = img_list
     # 地址
     address_ul = soup.find('ul', class_='con_mlist_ul')
     address_list = []
-    for li in address_ul.find_all('li'):
-        address_list.append({
-            'bigAddress': li.find('p', class_='mlist_li_title').text.strip().replace('\n', '').replace(' ', ''),
-            'smallAddress': li.find('p', class_='mlist_li_desc').text.strip()
-        })
+    if address_ul:
+        for li in address_ul.find_all('li'):
+            address_list.append({
+                'bigAddress': li.find('p', class_='mlist_li_title').text.strip().replace('\n', '').replace(' ', ''),
+                'smallAddress': li.find('p', class_='mlist_li_desc').text.strip()
+            })
     detail_doc['addressList'] = address_list
     # 历史记载
     history_ul = soup.find('ul', class_='history_ul')
     history_list = []
-    for li in history_ul.find_all('li'):
-        history_list.append({
-            'historyDate': li.find('div', class_='li_date').text.strip().replace('\n', '.'),
-            'historyText': li.find('span', class_='desc_real_title').text.strip()
-        })
+    if history_ul:
+        for li in history_ul.find_all('li'):
+            history_list.append({
+                'historyDate': li.find('div', class_='li_date').text.strip().replace('\n', '.'),
+                'historyText': li.find('span', class_='desc_real_title').text.strip()
+            })
     detail_doc['historyList'] = history_list
 
     # 问题记载
@@ -89,16 +92,17 @@ def get_html(doc, cid):
     question_soup = BeautifulSoup(question_r.text, 'lxml')
     question_ul = question_soup.find('ul', id='question-answer-list')
     question_list = []
-    for li in question_ul.find_all('li'):
-        try:
-            question_list.append({
-                'itemTitle': li.find('h4', class_='item-title').text.strip().replace('\n', '.'),
-                'itemTime': li.find('span', class_='item-time').text.strip(),
-                'itemStatus': li.find('div', class_='item-status').text.strip(),
-            })
-        except Exception as e:
-            print(e)
-            continue
+    if question_ul:
+        for li in question_ul.find_all('li'):
+            try:
+                question_list.append({
+                    'itemTitle': li.find('h4', class_='item-title').text.strip().replace('\n', '.'),
+                    'itemTime': li.find('span', class_='item-time').text.strip(),
+                    'itemStatus': li.find('div', class_='item-status').text.strip(),
+                })
+            except Exception as e:
+                print(e)
+                continue
     detail_doc['questionList'] = question_list
 
     # 反馈记载
