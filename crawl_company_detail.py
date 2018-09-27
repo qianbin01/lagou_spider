@@ -35,8 +35,13 @@ def get_html(doc, cid):
     if company_detail_one:
         print(doc['companyShortName'] + '已经存在，直接跳过')
         return False
+    proxy = str(get_proxy(), encoding='utf-8')
+    proxies = {
+        'http': 'http://{}'.format(proxy),
+        'https': 'http://{}'.format(proxy),
+    }  # 获取并设置代理
     url = base_url.format(cid)
-    r = requests.get(url, headers=headers, allow_redirects=False)
+    r = requests.get(url, headers=headers, proxies=proxies)
     soup = BeautifulSoup(r.text, 'lxml')
     span = soup.find('span', class_='company_content')
     if not span:

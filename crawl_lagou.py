@@ -78,7 +78,7 @@ def get_data_by_crawl(city, kw):
     }  # 获取并设置代理
     for i in range(1, 100):
         data = {"first": "true", "pn": i, "kd": kw}
-        base_request = requests.post(url, data=data, headers=headers, timeout=3)
+        base_request = requests.post(url, data=data, headers=headers, timeout=3, proxies=proxies)
         try:
             base_request.json().get('content')
         except Exception as e:
@@ -123,7 +123,7 @@ def get_company_by_crawl():
             'havemark': 0
         }
         print(i)
-        base_request = requests.post(url, data=data, headers=headers, timeout=3)
+        base_request = requests.post(url, data=data, headers=headers, timeout=3, proxies=proxies)
         if '网络出错啦' in base_request.text or not base_request.json().get('result', ''):
             flag = False
             while not flag:  # 若代理ip没走通则换一个
