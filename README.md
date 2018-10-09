@@ -1,6 +1,13 @@
 # 全栈系列Vue版拉勾，客官们来瞧瞧
 模拟拉勾app系列---python爬虫系列
+### 前言
+本项目是本人在闲暇时间编写的一个初级引导项目，麻雀虽小五脏俱全，所使用的东西绝大多数在开发中都能用得到，但难免会存在很多地方需要完善。
 
+由于近期要备战法考，且工作繁忙，没有时间维护，还存在很多BUG或需要优化的地方，希望多多提出（有空了就改），当然能给个star什么的就更好了.
+
+为了方便访问，也加入了mock数据,但不是很全，若需要完整体验，请按照下方步骤实现。
+
+前端项目由Vue框架编写，其余部分涉及到node、python等可移至下方项目或自行查阅。
 ### 注意：本项目个人开发练习，不作为任何商业用途
 
 # todolist
@@ -19,16 +26,16 @@
 + es6
 + scss
 + mint-ui
++ mockjs
++ jquery
 
 转发服务器：
 + node
 + express
-+ sqlite
 
 实际api服务器:
 + python3
 + mongodb
-+ elasticsearch
 
 爬虫：
 + python3
@@ -40,6 +47,24 @@
 ![](screenshots/login.gif)
 ### 首页
 ![](screenshots/home.gif)
+### 文章阅读
+![](screenshots/read.gif)
+### 选择城市
+![](screenshots/choose_city.gif)
+### 职位查看
+![](screenshots/recruit.gif)
+### 筛选
+![](screenshots/recurit_want.gif)
+### 排序
+![](screenshots/sort.gif)
+### 排序2
+![](screenshots/sort_2.gif)
+### 简历修改
+![](screenshots/edit_resume.gif)
+### 我的设置
+![](screenshots/setting.gif)
+
+ps:还有更多的设置就不截图了，有点大，有兴趣的clone下去看看吧
 
 # 线上地址
 
